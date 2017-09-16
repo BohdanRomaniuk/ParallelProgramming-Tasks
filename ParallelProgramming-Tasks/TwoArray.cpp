@@ -1,42 +1,48 @@
 #include <iostream>
 #include <thread>
+#include <future>
 using namespace std;
 
-//First thread
-void summing(int* arr1, int* arr2, unsigned length, int* result)
-{
-	arr1 = new int[length]{ 1,4,5,6,12 };
-	for (unsigned i = 0; i < 5; ++i)
-	{
-		*result += arr1[i] + arr2[i];
-	}
-}
-
 //Second thread
-void multiplying(int* arr1, int* arr2, unsigned length, int* result)
+void summing(promise<int*> arr1, int arr2[], unsigned length, int* result)
 {
-	arr2 = new int[length] {4, 5, 7, 8, 9};
+	int* inner_arr = new int[length]{ 1,4,5,6,12 };
 	for (unsigned i = 0; i < length; ++i)
 	{
-		*result += arr1[i] * arr2[i];
+		*result += inner_arr[i] + arr2[i];
 	}
+	arr1.set_value(inner_arr);
 }
 
+//First thread - Main Thread
 void main()
 {
 	int sum = 0;
 	int mult = 0;
-	int *arr1, *arr2;
-	thread first(summing, arr1, arr2, &sum);
-	thread second(multiplying, arr1, arr2, &mult);
-	/*if (first.joinable())
+	promise<int*> arr1_promise;
+	future<int*> arr1_result = arr1_promise.get_future();
+	int* arr2 = new int[5]{ 3,7,8,9,10 };
+	thread second(summing, move(arr1_promise), arr2, 5, &sum);
+	int* arr1 = arr1_result.get();
+	for (unsigned i = 0; i < 5; ++i)
 	{
-		first.join();
+		mult += arr1[i] * arr2[i];
 	}
+
 	if (second.joinable())
 	{
 		second.join();
-	}*/
-	cout << "Sum=" << sum << "\tMult=" << mult << endl;
+	}
+	cout << "First array: ";
+	for (int i = 0; i < 5; ++i)
+	{
+		cout << arr1[i] << " ";
+	}
+	cout << "\nSecond array: ";
+	for (int i = 0; i < 5; ++i)
+	{
+		cout << arr2[i] << " ";
+	}
+	cout << "\nSum=" << sum << "\tMult=" << mult << endl;
 	system("pause");
 }
