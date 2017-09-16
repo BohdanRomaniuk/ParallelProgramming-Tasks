@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ParallelProgramming-Tasks", "ParallelProgramming-Tasks\ParallelProgramming-Tasks.vcxproj", "{F2468A29-7FF6-4FF4-85E5-E8571DA74F4E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "0) Two array exchange data", "ParallelProgramming-Tasks\ParallelProgramming-Tasks.vcxproj", "{F2468A29-7FF6-4FF4-85E5-E8571DA74F4E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "1) Summing Matrices", "1) Summing Matrices\1) Summing Matrices.vcxproj", "{624C7282-5815-4A5C-BA2D-E172EA4557DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,14 @@ Global
 		{F2468A29-7FF6-4FF4-85E5-E8571DA74F4E}.Release|x64.Build.0 = Release|x64
 		{F2468A29-7FF6-4FF4-85E5-E8571DA74F4E}.Release|x86.ActiveCfg = Release|Win32
 		{F2468A29-7FF6-4FF4-85E5-E8571DA74F4E}.Release|x86.Build.0 = Release|Win32
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Debug|x64.ActiveCfg = Debug|x64
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Debug|x64.Build.0 = Debug|x64
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Debug|x86.ActiveCfg = Debug|Win32
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Debug|x86.Build.0 = Debug|Win32
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Release|x64.ActiveCfg = Release|x64
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Release|x64.Build.0 = Release|x64
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Release|x86.ActiveCfg = Release|Win32
+		{624C7282-5815-4A5C-BA2D-E172EA4557DE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
