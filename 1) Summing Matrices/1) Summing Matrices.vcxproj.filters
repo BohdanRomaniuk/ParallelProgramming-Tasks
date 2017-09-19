@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SummingMatrices.cpp">
+    <ClCompile Include="SumSubMatrices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
