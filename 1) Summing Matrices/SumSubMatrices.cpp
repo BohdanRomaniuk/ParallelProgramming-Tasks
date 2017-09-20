@@ -36,7 +36,7 @@ void subtraction(int** firstMatrix, int** secondMatrix, int** resMatrix, unsigne
 	}
 }
 
-void createThreads(int** firstMatrix, int** secondMatrix, int** resultMatrix, unsigned size, int threadsCount, bool isToSum=true)
+void createThreads(int** firstMatrix, int** secondMatrix, int** resultMatrix, unsigned size, unsigned threadsCount, bool isToSum=true)
 {
 	thread* threadsArray = new thread[threadsCount];
 	unsigned fromRow = 0;
