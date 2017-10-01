@@ -3,6 +3,14 @@
 #include <ctime>
 using namespace std;
 
+void setDefaultValuesToVec(double* vec, unsigned size)
+{
+	for (unsigned i = 0; i < size; ++i)
+	{
+		vec[i] = 0;
+	}
+}
+
 void multiplyMatrixAndVec(double** matrix, double* vec, double* result, unsigned size, unsigned fromRow, unsigned toRow)
 {
 	for (unsigned i = fromRow; i < toRow; ++i)
@@ -167,20 +175,35 @@ void main()
 	clock_t beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size);
 	cout << "1 thread time: " << (float)(clock() - beginTime)/CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
 	beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 2);
-	cout << "2 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	cout << "2 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
+	beginTime = clock();
+	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 4);
+	cout << "4 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
 	beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 5);
-	cout << "5 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	cout << "5 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
 	beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 10);
-	cout << "10 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	cout << "10 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
 	beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 20);
-	cout << "20 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	cout << "20 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	
+	setDefaultValuesToVec(resultVec, size);
 	beginTime = clock();
 	gaussianAlgorithm(matrixA, vectorB, resultVec, size, 50);
-	cout << "50 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	cout << "50 threads time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
 	system("pause");
 }
