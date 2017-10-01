@@ -14,7 +14,7 @@ void multiplyMatrixAndVec(double** matrix, double* vec, double* result, unsigned
 	}
 }
 
-void createThreadsForMatrixAndVectorMult(double** matrixT,double* vectorB, double* vectorRes, unsigned size,unsigned threadsCount)
+void createThreadsForMatrixAndVecMult(double** matrixT,double* vectorB, double* vectorRes, unsigned size,unsigned threadsCount)
 {
 	thread* threadsArray = new thread[threadsCount];
 	unsigned fromRow = 0;
@@ -70,14 +70,14 @@ void createThreadsForMatricesMult(double** firstMatrix, double** secondMatrix, d
 	}
 }
 
-void gaussianAlgorithm(double** matrixA, double* vectorB, double** result, unsigned size, unsigned threadsCount)
+void directCourse(double** matrixA, double* vectorB, unsigned size, unsigned from, unsigned to, unsigned threadsCount)
 {
-	//Direct Course
-	for (unsigned k = 0; k < size; ++k)
+	for (unsigned k = from; k < to; ++k)
 	{
 		double** matrixT = new double*[size];
 		for (unsigned i = 0; i < size; ++i)
 		{
+			matrixT[i] = new double[size];
 			matrixT[i][i] = 1;
 		}
 		matrixT[k][k] = 1 / matrixA[k][k];
@@ -86,16 +86,112 @@ void gaussianAlgorithm(double** matrixA, double* vectorB, double** result, unsig
 			matrixT[i][k] = -matrixA[i][k] / matrixA[k][k];
 		}
 		createThreadsForMatricesMult(matrixT, matrixA, matrixA, size, threadsCount);
-		createThreadsForMatrixAndVectorMult(matrixT, vectorB, vectorB, size, threadsCount);
+		createThreadsForMatrixAndVecMult(matrixT, vectorB, vectorB, size, threadsCount);
+	}
+}
+
+void reverseCourse(double** matrixA, double* vectorB, unsigned size, unsigned from, unsigned to, unsigned threadsCount)
+{
+	for (int k = from; k >= to; --k)
+	{
+		double** matrixV = new double*[size];
+		for (unsigned i = 0; i< size; ++i)
+		{
+			matrixV[i] = new double[size];
+			matrixV[i][i] = 1;
+		}
+		for (unsigned i = 0; i<k; ++i)
+		{
+			matrixV[i][k] = -matrixA[i][k];
+		}
+		createThreadsForMatricesMult(matrixV, matrixA, matrixA, size, threadsCount);
+		createThreadsForMatrixAndVecMult(matrixV, vectorB, vectorB, size, threadsCount);
+	}
+}
+
+void gaussianAlgorithm1(double** matrixA, double* vectorB, double* result, unsigned size, unsigned threadsCount = 1)
+{
+
+	thread* threadsArray = new thread[2*threadsCount];
+	unsigned from = 0;
+	unsigned threadStep = size / threadsCount;
+	unsigned to = threadStep;
+	for (unsigned i = 0; i < threadsCount; ++i)
+	{
+		threadsArray[i] = thread(directCourse, matrixA, vectorB, size, from, to, threadsCount);
+		from += threadStep;
+		to += threadStep;
+	}
+	for (unsigned i = 0; i < 2*threadsCount; ++i)
+	{
+		if (threadsArray[i].joinable())
+		{
+			threadsArray[i].join();
+		}
+	}
+	from = size - 1;
+	to = from - threadStep;
+	for (unsigned i = 0; i < threadsCount; ++i)
+	{
+		threadsArray[i] = thread(reverseCourse, matrixA, vectorB, size, from, to, threadsCount);
+		from -= threadStep;
+		to -= threadStep;
+	}
+	//Result
+	for (unsigned i = 0; i < size; ++i)
+	{
+		result[i] = vectorB[i];
+	}
+}
+
+void gaussianAlgorithm(double** matrixA, double* vectorB, double* result, unsigned size, unsigned threadsCount=1)
+{
+	//Direct Course
+	for (unsigned k = 0; k < size; ++k)
+	{
+		double** matrixT = new double*[size];
+		for (unsigned i = 0; i < size; ++i)
+		{
+			matrixT[i] = new double[size];
+			matrixT[i][i] = 1;
+		}
+		matrixT[k][k] = 1 / matrixA[k][k];
+		for (unsigned i = k + 1; i < size; ++i)
+		{
+			matrixT[i][k] = -matrixA[i][k] / matrixA[k][k];
+		}
+		createThreadsForMatricesMult(matrixT, matrixA, matrixA, size, threadsCount);
+		createThreadsForMatrixAndVecMult(matrixT, vectorB, vectorB, size, threadsCount);
 	}
 	//Reverse Course
+	for (int k = size - 1; k >= 0; --k)
+	{
+		double** matrixV = new double*[size];
+		for (unsigned i = 0; i< size; ++i)
+		{
+			matrixV[i] = new double[size];
+			matrixV[i][i] = 1;
+		}
+		for (unsigned i = 0; i<k; ++i)
+		{
+			matrixV[i][k] = -matrixA[i][k];
+		}
+		createThreadsForMatricesMult(matrixV, matrixA, matrixA, size, threadsCount);
+		createThreadsForMatrixAndVecMult(matrixV, vectorB, vectorB, size, threadsCount);
+	}
+	//Result
+	for (unsigned i = 0; i < size; ++i)
+	{
+		result[i] = vectorB[i];
+	}
 }
 
 void main()
 {
-	const unsigned size = 1000;
+	const unsigned size = 100;
 	double** matrixA = new double*[size];
 	double* vectorB = new double[size];
+	double* resultVec = new double[size];
 	srand(time(NULL));
 	for (unsigned i = 0; i < size; ++i)
 	{
@@ -106,5 +202,23 @@ void main()
 			matrixA[i][j] = rand() % 100;
 		}
 	}
+	clock_t beginTime = clock();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size);
+	cout << "1 thread time: " << (float)(clock() - beginTime)/CLOCKS_PER_SEC << " s" << endl;
+	beginTime = clock();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size, 2);
+	cout << "2 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	beginTime = clock();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size, 5);
+	cout << "5 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	beginTime = clock1();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size, 10);
+	cout << "10 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	beginTime = clock();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size, 20);
+	cout << "20 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
+	beginTime = clock();
+	gaussianAlgorithm1(matrixA, vectorB, resultVec, size, 50);
+	cout << "50 thread time: " << (float)(clock() - beginTime) / CLOCKS_PER_SEC << " s" << endl;
 	system("pause");
 }
