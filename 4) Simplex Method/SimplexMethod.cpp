@@ -14,49 +14,52 @@ void printMatrix(double** matrix, unsigned rows, unsigned cols)
 	}
 }
 
-bool findPivotElement(double** matrix,unsigned rows,unsigned cols, unsigned& minRowPos, unsigned& minColPos)
+bool findPivotElementPos(double** matrix,unsigned rows,unsigned cols, unsigned& minRowPos, unsigned& minColPos)
 {
 	bool found = false;
 	double min = 0;
-	minColPos = 0;
-	for (unsigned i = 0; i < cols; ++i)//по стовпц€х цикл
+	for (unsigned j = 0; j < cols; ++j)
 	{
-		if (matrix[rows - 1][i] < min)
+		if (matrix[rows - 1][j] < min)
 		{
+			min = matrix[rows - 1][j];
+			minColPos = j;
 			found = true;
-			min = matrix[rows - 1][i];
-			minColPos = i;
-			break;
 		}
 	}
-	double* rightColumn = new double[rows - 1];
-	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
+
+	//element < 0 at last row not found, end of simplex method
+	if (!found)
 	{
-		rightColumn[i] = matrix[i][cols - 1] / matrix[i][minColPos];
+		return false;
 	}
-	double minRightColumn = rightColumn[0];
-	minRowPos = 0;
-	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
+
+	min = DBL_MAX;
+	for (unsigned i = 0; i < rows - 1; ++i)
 	{
-		if (rightColumn[i] < minRightColumn)
+		double dividedElem = matrix[i][cols - 1] / matrix[i][minColPos];
+		if (dividedElem < min)
 		{
-			minRightColumn = rightColumn[i];
+			min = dividedElem;
 			minRowPos = i;
 		}
 	}
 	return found;
 }
 
-void simplexMethod(double** matrix, unsigned rows, unsigned cols)
+void simplexMethod(double** matrix, unsigned rows, unsigned cols, unsigned threadsCount=1)
 {
 	unsigned minRowPos, minColPos;
-	while(findPivotElement(matrix,rows,cols, minRowPos, minColPos))
+	unsigned* variblesNums = new unsigned[rows - 1];
+	while(findPivotElementPos(matrix,rows,cols, minRowPos, minColPos))
 	{
+		variblesNums[minRowPos] = minColPos;
 		double divider = matrix[minRowPos][minColPos];
 		for (unsigned i = 0; i < cols; ++i)
 		{
 			matrix[minRowPos][i] = matrix[minRowPos][i] / divider;
 		}
+
 		for (unsigned i = 0; i < rows; ++i)
 		{
 			if (i == minRowPos)
@@ -69,8 +72,15 @@ void simplexMethod(double** matrix, unsigned rows, unsigned cols)
 				matrix[i][j] = mult * matrix[minRowPos][j] + matrix[i][j];
 			}
 		}
+		cout << "\nIteration" << endl;
 		printMatrix(matrix, rows, cols);
 	}
+	cout << endl;
+	for (unsigned i = 0; i < rows - 1; ++i)
+	{
+		cout << "x" << variblesNums[i] + 1 << "=" << matrix[i][cols-1] << endl;
+	}
+	cout << "Maximum=" << matrix[rows - 1][cols - 1] << endl;
 }
 
 void main()
