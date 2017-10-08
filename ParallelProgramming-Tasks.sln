@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "2) Multiplication of matric
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3) Gaussian for SLE", "3) Gaussian for SLE\3) Gaussian for SLE.vcxproj", "{359ED3BA-E68F-474C-82ED-2D5F18B829EA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "4) Simplex Method", "4) Simplex Method\4) Simplex Method.vcxproj", "{69E32273-EACB-423C-9E5A-A1161B9E9FB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -51,6 +53,14 @@ Global
 		{359ED3BA-E68F-474C-82ED-2D5F18B829EA}.Release|x64.Build.0 = Release|x64
 		{359ED3BA-E68F-474C-82ED-2D5F18B829EA}.Release|x86.ActiveCfg = Release|Win32
 		{359ED3BA-E68F-474C-82ED-2D5F18B829EA}.Release|x86.Build.0 = Release|Win32
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Debug|x64.ActiveCfg = Debug|x64
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Debug|x64.Build.0 = Debug|x64
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Debug|x86.ActiveCfg = Debug|Win32
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Debug|x86.Build.0 = Debug|Win32
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Release|x64.ActiveCfg = Release|x64
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Release|x64.Build.0 = Release|x64
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Release|x86.ActiveCfg = Release|Win32
+		{69E32273-EACB-423C-9E5A-A1161B9E9FB9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
