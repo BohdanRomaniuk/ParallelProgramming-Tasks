@@ -64,9 +64,8 @@ void subRows(double** matrix, unsigned rows, unsigned cols, unsigned minRowPos, 
 	}
 }
 
-void mult(double** matrix, unsigned minRowPos, unsigned minColPos, unsigned from, unsigned to)
+void divideRow(double** matrix, unsigned minRowPos, unsigned minColPos, unsigned from, unsigned to, double divider)
 {
-	double divider = matrix[minRowPos][minColPos];
 	for (unsigned i = from; i < to; ++i)
 	{
 		matrix[minRowPos][i] = matrix[minRowPos][i] / divider;
@@ -90,19 +89,19 @@ void simplexMethod(double** matrix, unsigned rows, unsigned cols, unsigned threa
 	while(findPivotElementPos(matrix,rows,cols, minRowPos, minColPos))
 	{
 		variblesNums[minRowPos] = minColPos+1;
+
 		unsigned from = 0;
 		unsigned threadStep = cols / threadCount;
 		unsigned to = threadStep;
+		double divider = matrix[minRowPos][minColPos];
 		for (unsigned i = 0; i < threadCount; ++i)
 		{
-			threadArray[i] = thread(mult, matrix, minRowPos, minColPos, from, to);
+			threadArray[i] = thread(divideRow, matrix, minRowPos, minColPos, from, to, divider);
 			from += threadStep;
 			to += threadStep;
-			if (threadArray[i].joinable())
-			{
-				threadArray[i].join();
-			}
+			threadArray[i].join();
 		}
+		
 		/*
 		double divider = matrix[minRowPos][minColPos];
 		for (unsigned i = 0; i < cols; ++i)
@@ -119,12 +118,9 @@ void simplexMethod(double** matrix, unsigned rows, unsigned cols, unsigned threa
 			threadArray[i] = thread(subRows, matrix, rows, cols,minRowPos,minColPos, from, to);
 			from += threadStep;
 			to += threadStep;
-			if (threadArray[i].joinable())
-			{
-				threadArray[i].join();
-			}
+			threadArray[i].join();
 		}
-		
+
 		/*
 		for (unsigned i = 0; i < rows; ++i)
 		{
