@@ -2,9 +2,75 @@
 #include <thread>
 using namespace std;
 
-void simplexMethod()
+void printMatrix(double** matrix, unsigned rows, unsigned cols)
 {
+	for (size_t i = 0; i < rows; i++)
+	{
+		for (size_t j = 0; j < cols; j++)
+		{
+			cout << matrix[i][j] << " ";
+		}
+		cout << endl;
+	}
+}
 
+bool findPivotElement(double** matrix,unsigned rows,unsigned cols, unsigned& minRowPos, unsigned& minColPos)
+{
+	bool found = false;
+	double min = 0;
+	minColPos = 0;
+	for (unsigned i = 0; i < cols; ++i)//по стовпц€х цикл
+	{
+		if (matrix[rows - 1][i] < min)
+		{
+			found = true;
+			min = matrix[rows - 1][i];
+			minColPos = i;
+			break;
+		}
+	}
+	double* rightColumn = new double[rows - 1];
+	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
+	{
+		rightColumn[i] = matrix[i][cols - 1] / matrix[i][minColPos];
+	}
+	double minRightColumn = rightColumn[0];
+	minRowPos = 0;
+	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
+	{
+		if (rightColumn[i] < minRightColumn)
+		{
+			minRightColumn = rightColumn[i];
+			minRowPos = i;
+		}
+	}
+	return found;
+}
+
+void simplexMethod(double** matrix, unsigned rows, unsigned cols)
+{
+	unsigned minRowPos, minColPos;
+	while(findPivotElement(matrix,rows,cols, minRowPos, minColPos))
+	{
+		double divider = matrix[minRowPos][minColPos];
+		for (unsigned i = 0; i < cols; ++i)
+		{
+			matrix[minRowPos][i] = matrix[minRowPos][i] / divider;
+		}
+		for (unsigned i = 0; i < rows; ++i)
+		{
+			if (i == minRowPos)
+			{
+				continue;
+			}
+			double mult = -matrix[i][minColPos];
+			for (unsigned j = 0; j < cols; ++j)
+			{
+				matrix[i][j] = mult * matrix[minRowPos][j] + matrix[i][j];
+			}
+		}
+		printMatrix(matrix, rows, cols);
+	}
 }
 
 void main()
@@ -27,72 +93,7 @@ void main()
 		}
 	}
 	cout << "Input data:" << endl;
-	for (size_t i = 0; i < rows; i++)
-	{
-		for (size_t j = 0; j < cols; j++)
-		{
-			cout << matrix[i][j] << " ";
-		}
-		cout << endl;
-	}
-	cout << "First iter:" << endl;
-
-	double min = 0;
-	unsigned minColPos = 0;
-	for (unsigned i = 0; i < cols; ++i)//по стовпц€х цикл
-	{
-		if (matrix[rows - 1][i] < min)
-		{
-			min = matrix[rows - 1][i];
-			minColPos = i;
-		}
-	}
-	double* rightColumn = new double[rows - 1];
-	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
-	{
-		rightColumn[i] = matrix[i][cols - 1] / matrix[i][minColPos];
-	}
-	double minRightColumn = rightColumn[0];
-	unsigned minRowPos = 0;
-	for (unsigned i = 0; i < rows - 1; ++i)//по р€дках цикл
-	{
-		if (rightColumn[i] < minRightColumn)
-		{
-			minRightColumn = rightColumn[i];
-			minRowPos = i;
-		}
-	}
-
-	double divider = matrix[minRowPos][minColPos];
-	for (unsigned i = 0; i < cols; ++i)
-	{
-		matrix[minRowPos][i] = matrix[minRowPos][i] / divider;
-	}
-
-	
-	for (unsigned i = 0; i < rows - 1 && i != minRowPos; ++i)
-	{
-		double mult = -matrix[i][minColPos];
-		for (unsigned j = 0; j < cols; ++j)
-		{
-			matrix[i][j] = mult * matrix[minRowPos][j] + matrix[i][j];
-		}
-	}
-
-	//Last row
-	double mult = -matrix[rows - 1][minColPos];
-	for (unsigned j = 0; j < cols; ++j)
-	{
-		matrix[rows - 1][j] = mult*matrix[minRowPos][j] + matrix[rows - 1][j];
-	}
-
-	for (size_t i = 0; i < rows; i++)
-	{
-		for (size_t j = 0; j < cols; j++)
-		{
-			cout << matrix[i][j] << " ";
-		}
-		cout << endl;
-	}
+	printMatrix(matrix, rows, cols);
+	simplexMethod(matrix, rows, cols);
 	std::system("pause");
 }
