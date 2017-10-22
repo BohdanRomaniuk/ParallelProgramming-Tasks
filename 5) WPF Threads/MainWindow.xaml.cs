@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -19,9 +21,59 @@ namespace _5__WPF_Threads
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private double[,] FirstMatrix { get; set; }
+		private double[,] SecondMatrix { get; set; }
+		private uint Size { get; set; }
+		public double[,] Matrix { get; set; }
 		public MainWindow()
 		{
 			InitializeComponent();
+			Random randomizer = new Random();
+			Size = 100;
+			FirstMatrix = new double[Size, Size];
+			SecondMatrix = new double[Size, Size];
+			Matrix = new double[Size, Size];
+			for (uint i = 0; i < Size; ++i)
+			{
+				for (uint j = 0; j < Size; ++j)
+				{
+					FirstMatrix[i, j] = randomizer.Next(0, 1000);
+					SecondMatrix[i, j] = randomizer.Next(0, 2000);
+				}
+			}
+		}
+
+		private void createThreads_Click(object sender, RoutedEventArgs e)
+		{
+			uint threadsQuantity = Convert.ToUInt32(threadsCount.Text);
+			ThreadWindow[] threadsWindows = new ThreadWindow[threadsQuantity];
+			uint fromRow = 0;
+			uint threadStep = Size / threadsQuantity;
+			uint toRow = threadStep;
+			threadsProgress.Maximum = Size;
+			for(uint i=0; i<threadsQuantity; ++i)
+			{
+				threadsWindows[i] = new ThreadWindow(FirstMatrix, SecondMatrix, Size, fromRow, toRow);
+				threadsWindows[i].Show();
+				fromRow += threadStep;
+				toRow += threadStep;
+			}
+			for(uint i=0; i<threadsQuantity; ++i)
+			{
+				threadsWindows[i].StartCalculation();
+				threadsProgress.Value += threadStep;
+			}
+		}
+
+		private void dropThreads_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (Window item in Application.Current.Windows)
+			{
+				if (!(item is MainWindow))
+				{
+					item.Close();
+				}
+			}
 		}
 	}
 }

@@ -37,8 +37,8 @@
                     <ColumnDefinition Width="0.5*"/>
                     <ColumnDefinition Width="0.5*"/>
                 </Grid.ColumnDefinitions>
-                <Button x:Name="createThreads" Content="Створити потоки" Grid.Row="1" Grid.Column="0" Margin="4" Foreground="Green"/>
-                <Button x:Name="dropThreads" Content="Зупинити потоки" Grid.Row="1" Grid.Column="1" Margin="4" Foreground="Red"/>
+                <Button x:Name="createThreads" Content="Створити потоки" Grid.Row="1" Grid.Column="0" Margin="4" Foreground="Green" Click="createThreads_Click"/>
+                <Button x:Name="dropThreads" Content="Зупинити потоки" Grid.Row="1" Grid.Column="1" Margin="4" Foreground="Red" Click="dropThreads_Click"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="groupBox2" Header="Виконання" Grid.Row="2" Grid.Column="0" Margin="4">
