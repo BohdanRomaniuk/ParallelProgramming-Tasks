@@ -40,19 +40,25 @@ namespace _5__WPF_Threads
 			FromRow = fromRow;
 			ToRow = toRow;
 		}
-		public void StartCalculation()
+		public async void StartCalculation()
 		{
-			for (uint i = FromRow; i < ToRow; ++i)
+			await Task.Run(() =>
 			{
-				for (uint j = 0; j < Size; ++j)
-				{
-					for (uint k = 0; k < Size; ++k)
+				Dispatcher.Invoke(() => 
+				{ 
+					for (uint i = FromRow; i < ToRow; ++i)
 					{
-						((MainWindow)Application.Current.Windows[0]).Matrix[i, j] += FirstMatrix[i, k] * SecondMatrix[k, j];
-						++singleThreadProgres.Value;
+						for (uint j = 0; j < Size; ++j)
+						{
+							for (uint k = 0; k < Size; ++k)
+							{
+								((MainWindow)Application.Current.Windows[0]).Matrix[i, j] += FirstMatrix[i, k] * SecondMatrix[k, j];
+								++singleThreadProgres.Value;
+							}
+						}
 					}
-				}
-			}
+				});
+			});
 		}
 	}
 }
