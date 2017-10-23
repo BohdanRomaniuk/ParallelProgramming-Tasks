@@ -12,6 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 
 namespace _5__WPF_Threads
@@ -19,8 +20,21 @@ namespace _5__WPF_Threads
 	/// <summary>
 	/// Interaction logic for ThreadWindow.xaml
 	/// </summary>
-	public partial class ThreadWindow : Window
+	public partial class ThreadWindow : Window, INotifyPropertyChanged
 	{
+		private uint threadProgres = 0;
+		public uint ThreadProgress
+		{
+			get
+			{
+				return threadProgres;
+			}
+			set
+			{
+				threadProgres = value;
+				OnPropertyChanged("ThreadProgress");
+			}
+		}
 		private double[,] FirstMatrix { get; set; }
 		private double[,] SecondMatrix { get; set; }
 		private uint Size { get; set; }
@@ -33,6 +47,7 @@ namespace _5__WPF_Threads
 		public ThreadWindow(double[,] firstMatrix, double[,] secondMatrix, uint size, uint fromRow, uint toRow)
 		{
 			InitializeComponent();
+			DataContext = this;
 			singleThreadProgres.Maximum = (toRow-fromRow)+2*size;
 			FirstMatrix = firstMatrix;
 			SecondMatrix = secondMatrix;
@@ -40,6 +55,7 @@ namespace _5__WPF_Threads
 			FromRow = fromRow;
 			ToRow = toRow;
 		}
+
 		public async void StartCalculation()
 		{
 			await Task.Run(() =>
@@ -53,12 +69,18 @@ namespace _5__WPF_Threads
 							for (uint k = 0; k < Size; ++k)
 							{
 								((MainWindow)Application.Current.Windows[0]).Matrix[i, j] += FirstMatrix[i, k] * SecondMatrix[k, j];
-								++singleThreadProgres.Value;
+								++ThreadProgress;
 							}
 						}
 					}
 				});
 			});
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged(string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }

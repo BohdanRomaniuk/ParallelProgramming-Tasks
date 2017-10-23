@@ -13,14 +13,28 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.ComponentModel;
 
 namespace _5__WPF_Threads
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
-	public partial class MainWindow : Window
+	public partial class MainWindow : Window, INotifyPropertyChanged
 	{
+		private uint currentProgres=0;
+		public uint CurrentProgress
+		{
+			get
+			{
+				return currentProgres;
+			}
+			set
+			{
+				currentProgres = value;
+				OnPropertyChanged("CurrentProgress");
+			}
+		}
 		private double[,] FirstMatrix { get; set; }
 		private double[,] SecondMatrix { get; set; }
 		private uint Size { get; set; }
@@ -28,6 +42,7 @@ namespace _5__WPF_Threads
 		public MainWindow()
 		{
 			InitializeComponent();
+			DataContext = this;
 			Random randomizer = new Random();
 			Size = 100;
 			FirstMatrix = new double[Size, Size];
@@ -61,7 +76,7 @@ namespace _5__WPF_Threads
 			for(uint i=0; i<threadsQuantity; ++i)
 			{
 				threadsWindows[i].StartCalculation();
-				threadsProgress.Value += threadStep;
+				CurrentProgress += threadStep;
 			}
 		}
 
@@ -74,6 +89,12 @@ namespace _5__WPF_Threads
 					item.Close();
 				}
 			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged(string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 	}
 }
