@@ -3,19 +3,19 @@
 #include <ctime>
 using namespace std;
 
-int findMinWay(int* ways, bool* visited, unsigned size)
+int findMinIndex(int* ways, bool* visited, unsigned size)
 {
 	int min = INT_MAX;
-	int min_index = 0;
+	int minIndex = 0;
 	for (unsigned i = 0; i < size; ++i)
 	{
 		if (visited[i] == false && ways[i] < min)
 		{
 			min = ways[i];
-			min_index = i;
+			minIndex = i;
 		}
 	}
-	return min_index;
+	return minIndex;
 }
 
 void searching(int** matrix, int* ways, int* parent, bool* visited, int minWay, unsigned from, unsigned to)
@@ -45,26 +45,29 @@ void prims(int** matrix, unsigned size, unsigned threadCount=1)
 	ways[0] = 0;
 	parent[0] = -1;
 
-	for (unsigned count = 0; count < size- 1; count++)
+	
+	for (unsigned i = 0; i < size - 1; ++i)
 	{
-		int minWay = findMinWay(ways, visited, size);
+		int minWay = findMinIndex(ways, visited, size);
 		visited[minWay] = true;
+
 		thread* threadArray = new thread[threadCount];
 		unsigned from = 0;
 		unsigned threadStep = size / threadCount;
 		unsigned to = threadStep;
-		for (unsigned i = 0; i < threadCount; ++i)
+		for (unsigned j = 0; j < threadCount; ++j)
 		{
-			threadArray[i] = thread(searching, matrix, ways, parent, visited, minWay, from, to);
+			threadArray[j] = thread(searching, matrix, ways, parent, visited, minWay, from, to);
 			from += threadStep;
 			to += threadStep;
+			threadArray[j].join();
 		}
 	}
 }
 
 void main()
 {
-	const unsigned size = 1000;
+	const unsigned size = 100;
 	srand(time(NULL));
 	int** matrix = new int*[size];
 	for (unsigned i = 0; i < size; ++i)
