@@ -30,12 +30,15 @@ void createThreads(int** matrix, int** way, unsigned size, unsigned threadCount 
 	for (unsigned i = 0; i < threadCount; ++i)
 	{
 		threadArray[i] = thread(floyd, matrix, way, size, from, to);
+		from += threadStep;
+		to += threadStep;
+	}
+	for (unsigned i = 0; i < threadCount; ++i)
+	{
 		if (threadArray[i].joinable())
 		{
 			threadArray[i].join();
 		}
-		from += threadStep;
-		to += threadStep;
 	}
 }
 

@@ -60,7 +60,14 @@ void prims(int** matrix, unsigned size, unsigned threadCount=1)
 			threadArray[j] = thread(searching, matrix, ways, parent, visited, minWay, from, to);
 			from += threadStep;
 			to += threadStep;
-			threadArray[j].join();
+			//threadArray[j].join();
+		}
+		for (unsigned i = 0; i < threadCount; ++i)
+		{
+			if (threadArray[i].joinable())
+			{
+				threadArray[i].join();
+			}
 		}
 	}
 }
